@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1610.uk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@500;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #f4efe6;
+    color: #1a1a1a;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    padding: 1.75rem 2rem 0;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+  }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  .label {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #8a8276;
+    margin-bottom: 0.75rem;
+  }
+  .time {
+    font-size: clamp(3rem, 16vw, 11rem);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    font-variant-numeric: tabular-nums;
+    line-height: 0.85;
+    max-width: 100%;
+    word-break: break-word;
+  }
+  footer {
+    padding: 1.5rem 1rem calc(1.5rem + env(safe-area-inset-bottom));
+    text-align: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: #8a8276;
+    line-height: 1.6;
+  }
+  @media (max-width: 640px) {
+    header {
+      padding: 1.25rem 1rem 0;
+      font-size: 0.8rem;
+    }
+    main {
+      padding: 1rem;
+    }
+    .label {
+      font-size: 1rem;
+      letter-spacing: 0.18em;
+      margin-bottom: 0.6rem;
+    }
+    .time {
+      font-size: clamp(2.75rem, 15vw, 5rem);
+    }
+    footer {
+      font-size: 0.85rem;
+      padding: 1.25rem 1rem calc(1.25rem + env(safe-area-inset-bottom));
+    }
+  }
+  footer a {
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 1px solid #c0392b;
+    padding-bottom: 1px;
+    transition: color 0.15s;
+  }
+  footer a:hover {
+    color: #c0392b;
+  }
+</style>
+</head>
+<body>
+<header>#ILOVE1610</header>
+<main>
+  <div class="label" id="label">time until 16:10</div>
+  <div class="time" id="time">--:--:--</div>
+</main>
+<footer>
+  wonder why it's .uk? that was the cheapest tld i could buy<br>
+  made by <a href="https://thefilip.com" target="_blank" rel="noopener">thefilip.com</a>
+</footer>
+<script>
+  const labelEl = document.getElementById('label');
+  const timeEl = document.getElementById('time');
+
+  const pad = n => String(n).padStart(2, '0');
+
+  function format(ms) {
+    const total = Math.floor(ms / 1000);
+    const s = total % 60;
+    const m = Math.floor(total / 60) % 60;
+    const h = Math.floor(total / 3600) % 24;
+    const d = Math.floor(total / 86400);
+    if (d > 0) return `${d}d ${pad(h)}:${pad(m)}:${pad(s)}`;
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  function todayTarget(now) {
+    const t = new Date(now);
+    t.setHours(16, 10, 0, 0);
+    return t;
+  }
+
+  function tick() {
+    const now = new Date();
+    const target = todayTarget(now);
+    const diff = target - now;
+
+    if (diff > 0) {
+      labelEl.textContent = 'time until 16:10';
+      timeEl.textContent = format(diff);
+    } else {
+      const ago = now - target;
+      const secondsAgo = Math.floor(ago / 1000);
+      labelEl.textContent = '16:10 was';
+      if (secondsAgo < 60) {
+        timeEl.textContent = `${secondsAgo}s ago`;
+      } else {
+        timeEl.textContent = `${format(ago)} ago`;
+      }
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
