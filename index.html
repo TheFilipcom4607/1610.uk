@@ -144,24 +144,44 @@
     return hms;
   }
 
+  const params = new URLSearchParams(location.search);
+
+  function parseTarget(raw) {
+    if (!raw) return null;
+    const digits = raw.replace(/\D/g, '');
+    if (digits.length < 3 || digits.length > 4) return null;
+    const padded = digits.padStart(4, '0');
+    const h = parseInt(padded.slice(0, 2), 10);
+    const m = parseInt(padded.slice(2, 4), 10);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+    return { h, m, label: `${pad(h)}:${pad(m)}` };
+  }
+
+  const target = parseTarget(params.get('t')) ?? { h: 16, m: 10, label: '16:10' };
+  const customLabel = (params.get('l') ?? '').trim().slice(0, 40);
+  const displayLabel = customLabel || target.label;
+
+  document.title = customLabel ? `${customLabel} · ${target.label}` : target.label;
+
   function todayTarget(now) {
     const t = new Date(now);
-    t.setHours(16, 10, 0, 0);
+    t.setHours(target.h, target.m, 0, 0);
     return t;
   }
 
   function tick() {
     const now = new Date();
-    const target = todayTarget(now);
-    const diff = target - now;
+    const targetDate = todayTarget(now);
+    const diff = targetDate - now;
 
     if (diff > 0) {
-      labelEl.textContent = 'time until 16:10';
+      labelEl.textContent = `time until ${displayLabel}`;
       timeEl.innerHTML = format(diff);
     } else {
-      const ago = now - target;
+      const ago = now - targetDate;
       const secondsAgo = Math.floor(ago / 1000);
-      labelEl.textContent = '16:10 was';
+      labelEl.textContent = `${displayLabel} was`;
       if (secondsAgo < 60) {
         timeEl.innerHTML = `${secondsAgo}s ago`;
       } else {
